@@ -1,0 +1,8 @@
+name: graphiti
+version: 1.0.0
+description: "Graphiti — temporally-aware knowledge graph with hybrid semantic + keyword + graph search, bi-temporal fact tracking, and automatic entity deduplication."
+pip_dependencies:
+  - "mcp>=1.27.2"
+requires_env: []
+hooks:
+  - on_session_end

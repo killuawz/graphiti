@@ -20,6 +20,7 @@ from graphiti_core.nodes import EntityNode, EpisodeType, SagaNode
 from graphiti_core.search.search_filters import SearchFilters
 from graphiti_core.utils.maintenance.graph_data_operations import clear_data
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
 
@@ -1232,6 +1233,26 @@ async def run_mcp_server():
     """Run the MCP server in the current event loop."""
     # Initialize the server
     mcp_config = await initialize_server()
+
+    # Build transport security settings from config
+    transport_security = None
+    ts_config = config.server.transport_security
+    if ts_config.enabled:
+        transport_security = TransportSecuritySettings(
+            enable_dns_rebinding_protection=True,
+            allowed_hosts=ts_config.allowed_hosts or [],
+            allowed_origins=ts_config.allowed_origins or [],
+        )
+        logger.info(
+            'DNS rebinding protection enabled with allowed_hosts=%s, allowed_origins=%s',
+            ts_config.allowed_hosts,
+            ts_config.allowed_origins,
+        )
+    else:
+        logger.info('DNS rebinding protection disabled (default) — all hosts accepted')
+
+    # Apply transport security to MCP settings (MCP 1.27+ reads from settings, not run args)
+    mcp.settings.transport_security = transport_security
 
     # Run the server with configured transport
     logger.info(f'Starting MCP server with transport: {mcp_config.transport}')

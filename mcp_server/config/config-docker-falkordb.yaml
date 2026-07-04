@@ -5,6 +5,9 @@ server:
   transport: "http"  # HTTP transport (SSE is deprecated)
   host: "0.0.0.0"
   port: 8000
+  # DNS rebinding protection (disabled for local/dev with Tailscale/VPN access)
+  transport_security:
+    enabled: false
   
 llm:
   provider: "openai"  # Options: openai, azure_openai, anthropic, gemini, groq
@@ -45,8 +48,8 @@ embedder:
   
   providers:
     openai:
-      api_key: ${OPENAI_API_KEY}
-      api_url: ${OPENAI_API_URL:https://api.openai.com/v1}
+      api_key: ${OPENAI_EMB_API_KEY}
+      api_url: ${OPENAI_EMB_API_URL:https://api.openai.com/v1}
       organization_id: ${OPENAI_ORGANIZATION_ID:}
       
     azure_openai:

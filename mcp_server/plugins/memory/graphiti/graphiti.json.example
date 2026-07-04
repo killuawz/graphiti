@@ -1,0 +1,42 @@
+{
+    "_comment": "Graphiti Memory Provider 配置文件示例 — 保存为 $HERMES_HOME/graphiti.json",
+
+    "mcp_url": "http://localhost:8000/mcp",
+    "_mcp_url": "Graphiti MCP 服务器地址（默认 http://localhost:8000/mcp）",
+
+    "group_id": "",
+    "_group_id": "图谱数据命名空间。空字符串使用服务器默认 group。用于多租户/多会话隔离。",
+
+    "recall_mode": "tools",
+    "_recall_mode": "召回模式。tools=仅暴露工具, context=仅自动注入上下文, hybrid=两者兼备。",
+
+    "injection_frequency": "every-turn",
+    "_injection_frequency": "上下文注入频率。every-turn=每轮注入, first-turn=仅首轮注入。仅 context/hybrid 模式生效。",
+
+    "retain_every_n_turns": 3,
+    "_retain_every_n_turns": "每 N 轮对话批量写入一次。值越大越省 LLM token（每次写入触发 2-3 次 LLM 调用），但记忆延迟越高。设为 1 则每轮实时写入。",
+
+    "auto_retain": true,
+    "_auto_retain": "是否自动持久化对话到知识图谱。false 时仅通过工具手动写入。",
+
+    "auto_recall": true,
+    "_auto_recall": "是否在每轮对话前自动召回相关知识图谱内容（注入到 system prompt）。仅 context/hybrid 模式生效。",
+
+    "retain_context": "conversation between Hermes Agent and the User",
+    "_retain_context": "持久化时的 source_description 标签，用于描述对话上下文。",
+
+    "retain_user_prefix": "User",
+    "_retain_user_prefix": "持久化时用户消息的角色前缀。",
+
+    "retain_assistant_prefix": "Assistant",
+    "_retain_assistant_prefix": "持久化时助手消息的角色前缀。",
+
+    "recall_max_input_chars": 800,
+    "_recall_max_input_chars": "召回查询的最大字符数。超长查询会被截断以节省 token。",
+
+    "timeout": 120,
+    "_timeout": "MCP 请求超时秒数。网络较慢时可适当增大。",
+
+    "auto_clear_group_on_shutdown": false,
+    "_auto_clear_group_on_shutdown": "shutdown 时是否清空当前 group 的所有图谱数据。⚠️ 仅用于测试/开发环境，生产环境必须为 false。"
+}

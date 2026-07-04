@@ -73,6 +73,30 @@ class YamlSettingsSource(PydanticBaseSettingsSource):
         return self._expand_env_vars(raw_config)
 
 
+class TransportSecurityConfig(BaseModel):
+    """DNS rebinding protection configuration for MCP transport security.
+
+    When ``enabled`` is True, the server validates ``Host`` and ``Origin`` headers
+    against the allowlists. When False (default), all hosts and origins are accepted.
+
+    The MCP SDK auto-enables protection when ``host`` is localhost (127.0.0.1,
+    localhost, ::1). Explicitly configuring this section overrides that behavior.
+    """
+
+    enabled: bool = Field(
+        default=False,
+        description='Enable DNS rebinding protection (validates Host/Origin headers)',
+    )
+    allowed_hosts: list[str] = Field(
+        default_factory=list,
+        description='Allowed Host header values. Use "host:*" for any port on that host.',
+    )
+    allowed_origins: list[str] = Field(
+        default_factory=list,
+        description='Allowed Origin header values. Use "http://host:*" for any port.',
+    )
+
+
 class ServerConfig(BaseModel):
     """Server configuration."""
 
@@ -82,6 +106,10 @@ class ServerConfig(BaseModel):
     )
     host: str = Field(default='0.0.0.0', description='Server host')
     port: int = Field(default=8000, description='Server port')
+    transport_security: TransportSecurityConfig = Field(
+        default_factory=TransportSecurityConfig,
+        description='DNS rebinding protection settings for MCP transport',
+    )
 
 
 class OpenAIProviderConfig(BaseModel):

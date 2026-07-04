@@ -1,10 +1,12 @@
 services:
   falkordb:
     image: falkordb/falkordb:latest
+    container_name: falkordb
     ports:
       - "6379:6379" # Redis/FalkorDB port
       - "3000:3000" # FalkorDB web UI
     environment:
+      - TZ=Asia/Shanghai
       - FALKORDB_PASSWORD=${FALKORDB_PASSWORD:-}
       - BROWSER=${BROWSER:-1}  # Enable FalkorDB Browser UI (set to 0 to disable)
     volumes:
@@ -21,16 +23,17 @@ services:
     #   docker compose -f docker-compose-falkordb.yml build
     # The Docker Hub image may lag behind the latest release.
     image: zepai/knowledge-graph-mcp:standalone
+    container_name: graphiti
     build:
       context: ..
       dockerfile: docker/Dockerfile.standalone
     env_file:
-      - path: ../.env
-        required: false
+      - ../.env
     depends_on:
       falkordb:
         condition: service_healthy
     environment:
+      - TZ=Asia/Shanghai
       # Database configuration
       - FALKORDB_URI=${FALKORDB_URI:-redis://falkordb:6379}
       - FALKORDB_PASSWORD=${FALKORDB_PASSWORD:-}
@@ -43,7 +46,7 @@ services:
     volumes:
       - ../config/config-docker-falkordb.yaml:/app/mcp/config/config.yaml:ro
     ports:
-      - "8000:8000" # Expose the MCP server via HTTP transport
+      - "28000:8000" # Expose the MCP server via HTTP transport
     command: ["uv", "run", "main.py"]
 
 volumes:
